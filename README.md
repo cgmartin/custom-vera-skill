@@ -250,7 +250,7 @@ The Amazon Alexa Developer docs have [step-by-step instructions](https://develop
 
 [Follow these steps](https://developer.amazon.com/blogs/post/tx3cx1etrzz2npc/alexa-account-linking-5-steps-to-seamlessly-link-your-alexa-skill-with-login-wit) to link your Custom Vera Skill with *Login with Amazon*.
 
-You can use the following URL for a privacy policy link in Step 1: <https://raw.githubusercontent.com/cgmartin/vera-custom-skill/lwa/privacy-policy.html>
+You can use the following URL for a privacy policy link in Step 1: <https://raw.githubusercontent.com/cgmartin/custom-vera-skill/master/lwa/privacy-policy.html>
 
 ## License
 
