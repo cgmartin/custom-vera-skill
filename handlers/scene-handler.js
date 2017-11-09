@@ -1,0 +1,40 @@
+'use strict';
+const utils = require('../lib/utils');
+const res = require('../lib/responses');
+
+module.exports = function sceneHandler(vera, request, context, callback) {
+  const correlationToken = request.directive.header.correlationToken;
+  const directive = request.directive.header.name || 'unknown';
+  const endpointId = request.directive.endpoint.endpointId;
+  const [ctrlId, endpointType, sId] = endpointId.split('-');
+
+  // Retrieve the scene info from vera
+  utils.isEndpointTypeValid(endpointId, endpointType, 'scene')
+    .then(() => vera.getSummaryDataById(ctrlId))
+    .then(([sData, cInfo]) => Promise.all([utils.findSceneInSummaryData(sId, sData), sData, cInfo]))
+    .then(([s, sData, cInfo]) => controlScene(s, sData, cInfo, directive, vera))
+    .then(([props, eventName]) => callback(null, res.createResponseObj(
+      props, endpointId, correlationToken, 'Alexa.SceneController', eventName
+    )))
+    .catch((err) => callback(null, res.createErrorResponse(err, correlationToken, endpointId)));
+};
+
+function controlScene(s, sData, cInfo, directive, vera) {
+  // TODO: Verify that the scene only contains allowed secure devices within it
+  // https://developer.amazon.com/docs/smarthome/provide-scenes-in-a-smart-home-skill.html#allowed-devices
+  if (Number(s.paused) === 1) {
+    return Promise.reject(utils.error('ENDPOINT_UNREACHABLE', `Endpoint scene is paused: ${s.id}`));
+  }
+
+  // TODO: Include support for deactivate scene?
+  return activateScene(s, cInfo, sData, vera);
+}
+
+function activateScene(s, cInfo, sData, vera) {
+  // Send the scene activation request
+  return vera.runScene(cInfo, s.id)
+    .then(() => [
+      [res.createContextProperty('Alexa.EndpointHealth', 'connectivity', {value: 'OK'})],
+      'ActivationStarted'
+    ]);
+}

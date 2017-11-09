@@ -1,0 +1,36 @@
+{
+  "name": "vera-custom-skill",
+  "version": "1.0.0",
+  "description": "Unofficial custom Smart Home v3 skill for Vera controllers",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "handlers": "handlers"
+  },
+  "scripts": {
+    "test-discovery": "lambda-local -l index.js --envfile .env -t 10 -e examples/discovery-event.js",
+    "test-report-state": "lambda-local -l index.js --envfile .env -t 10 -e examples/report-state-event.js",
+    "test-activate-scene": "lambda-local -l index.js --envfile .env -t 10 -e examples/activate-scene-event.js",
+    "test-adjust-power-level": "lambda-local -l index.js --envfile .env -t 10 -e examples/adjust-power-level-event.js",
+    "test-set-power-level": "lambda-local -l index.js --envfile .env -t 10 -e examples/set-power-level-event.js",
+    "test-turnon-power": "lambda-local -l index.js --envfile .env -t 10 -e examples/turnon-power-event.js",
+    "test-turnoff-power": "lambda-local -l index.js --envfile .env -t 10 -e examples/turnoff-power-event.js",
+    "test-adjust-temperature": "lambda-local -l index.js --envfile .env -t 10 -e examples/adjust-temperature-event.js",
+    "test-set-temperature": "lambda-local -l index.js --envfile .env -t 10 -e examples/set-temperature-event.js",
+    "test-thermostat-mode": "lambda-local -l index.js --envfile .env -t 10 -e examples/set-thermostat-mode-event.js",
+    "test-lock": "lambda-local -l index.js --envfile .env -t 10 -e examples/lock-event.js",
+    "test-unlock": "lambda-local -l index.js --envfile .env -t 10 -e examples/unlock-event.js"
+  },
+  "author": "Christopher Martin <cgmartin@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=6.10"
+  },
+  "engineStrict": true,
+  "dependencies": {
+    "aws-sdk": "^2.145.0"
+  },
+  "devDependencies": {
+    "lambda-local": "^1.4.4"
+  }
+}
