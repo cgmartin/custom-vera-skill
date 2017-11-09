@@ -11,7 +11,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 - Only a single Vera user is supported. Unless you want the world controlling your home devices, multi-user authentication and other implementation changes would be required for a public skill.
 - Vera Scenes are not currently being checked for [secure devices](https://developer.amazon.com/docs/smarthome/provide-scenes-in-a-smart-home-skill.html#allowed-devices) and would not pass the Skill approval process. Do not put Door Locks or other sensitive devices that could be misued from Alexa within your Vera Scenes. Again, use at your own risk.
 
-Most Smart Home features have been implemented (dimmers, switches, locks, thermostats, scenes), but there are few items missing support:
+## What is Included
+
+Most Smart Home v3 features have been implemented (dimmers, switches, locks, thermostats, scenes), but there are few items missing support:
 
 - [Cameras](https://developer.amazon.com/docs/smarthome/build-smart-home-camera-skills.html): If you have a camera integrated with Vera and wouldn't mind sharing your user_data and sdata information for the device, I'd be happy to look into adding support. I do not currently have any cameras to test with.
 - [Colored Lights](https://developer.amazon.com/docs/smarthome/build-smart-home-skills-for-lights.html): Same deal... I do not have any colored lights to test with - please share your user_data and sdata device info.
