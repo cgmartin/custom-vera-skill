@@ -142,7 +142,7 @@ The next sections assume you have the AWS CLI installed and [configured with you
 
 ### Alexa Skill Setup
 
-The Amazon Alexa Developer docs have [step-by-step instructions](https://developer.amazon.com/docs/smarthome/steps-to-build-a-smart-home-skill.html) for setting up a Smart Home Skill. Follow these and
+The Amazon Alexa Developer docs have [step-by-step instructions](https://developer.amazon.com/docs/smarthome/steps-to-build-a-smart-home-skill.html) for setting up a Smart Home Skill. Follow these and then continue with the instructions below.
 
 ### Lambda Setup
 
