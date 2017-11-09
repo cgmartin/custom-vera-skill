@@ -1,6 +1,6 @@
 # vera-custom-skill
 
-UNOFFICIAL custom skill for Vera™ Controllers. Compatible with [Smart Home Skill API v3](https://developer.amazon.com/docs/smarthome/smart-home-skill-migration-guide.html).
+UNOFFICIAL custom skill for Vera™ Controllers. Compatible with the Alexa [Smart Home Skill API v3](https://developer.amazon.com/docs/smarthome/smart-home-skill-migration-guide.html).
 
 This Open Source Software (OSS) project is not affiliated with, endorsed, or sponsored by Vera Control, Ltd. in any way. The author is merely a hobbyist who owns a VeraPlus controller and wishes to share this implementation for Home Skill v3 support with other DIYers while the official Vera Control skill is updated (as of 8 Nov 2017). Use at your own risk.
 
