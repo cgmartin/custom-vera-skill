@@ -1,4 +1,4 @@
-# vera-custom-skill
+# custom-vera-skill
 
 UNOFFICIAL custom skill for Vera™ Controllers. Compatible with the Alexa [Smart Home Skill API v3](https://developer.amazon.com/docs/smarthome/smart-home-skill-migration-guide.html).
 
@@ -35,8 +35,8 @@ These instructions will get a copy of the project up and running on your local m
 1. Clone this repo:
 
     ```
-    $ git clone https://github.com/cgmartin/vera-custom-skill.git
-    $ cd vera-custom-skill
+    $ git clone https://github.com/cgmartin/custom-vera-skill.git
+    $ cd custom-vera-skill
     ```
 
 2. Install Node.js dependencies:
@@ -93,6 +93,8 @@ These instructions will get a copy of the project up and running on your local m
     * If you see a `Discover.Response` event header and the `"Lambda successfully executed"` message in the output, all is well. Move onto the next instructions to set up the S3 cache and to deploy into AWS.
 
     * If you see an `ErrorResponse` event header, or a `Lambda failed` message, something went wrong. Double check your environment variable settings. If still having issues and out of ideas, submit a github issue for more help.
+
+    Check out the other types of events (turnon switches, thermostats, dimmers, etc.) that you can test with locally under `./examples` and the associated npm commands within `./package.json`.
 
 
 ## AWS Deployment Notes
