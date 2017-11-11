@@ -1,5 +1,5 @@
 {
-  "name": "vera-custom-skill",
+  "name": "custom-vera-skill",
   "version": "1.0.0",
   "description": "Unofficial custom Smart Home v3 skill for Vera controllers",
   "main": "index.js",
