@@ -101,6 +101,7 @@ function createDimmerEndpoint(d, cInfo, udata) {
     case 3: displayCategory = 'SWITCH'; break;
     case 4: displayCategory = 'LIGHT'; break;
   }
+  displayCategory = getDisplayCategoryOverride(d, displayCategory);
 
   const endpoint = createStandardDeviceEndpointProps('Dimmable Light', displayCategory, d, cInfo, udata);
   endpoint.capabilities = [
@@ -130,6 +131,7 @@ function createSwitchEndpoint(d, cInfo, udata) {
     case 5: displayCategory = 'SWITCH'; break;
     case 6: displayCategory = 'SWITCH'; break;
   }
+  displayCategory = getDisplayCategoryOverride(d, displayCategory);
 
   const endpoint = createStandardDeviceEndpointProps('Switch', displayCategory, d, cInfo, udata);
   endpoint.capabilities = [
@@ -256,4 +258,12 @@ function createCameraStreamDiscoveryCapability(d) {
 function getRoomNameFromId(rId, rooms) {
   const room = rooms.find((r) => Number(r.id) === Number(rId));
   return (room) ? room['name'] : null;
+}
+
+function getDisplayCategoryOverride(d, defaultCategory) {
+  if (!d.states) return defaultCategory;
+  const override = d.states.find((s) =>
+    (s.service === 'urn:cgmartin-com:serviceId:SmartHomeSkill1' && s.variable === 'DisplayCategory')
+  );
+  return (override) ? override.value : defaultCategory;
 }
