@@ -24,5 +24,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Initial release
 - See README.md for setup instructions.
 
-[Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/cgmartin/custom-vera-skill/compare/v1.0.1...HEAD
 [v1.0.1]: https://github.com/cgmartin/custom-vera-skill/compare/v1.0.0...v1.0.1
