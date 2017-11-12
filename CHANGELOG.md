@@ -14,4 +14,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Initial release
 - See README.md for setup instructions.
 
-[v1.0.1]: https://github.com/cgmarting/custom-vera-skill/compare/v1.0.0...v1.0.1
+
+[v1.0.1]: https://github.com/cgmartin/custom-vera-skill/compare/v1.0.0...v1.0.1
