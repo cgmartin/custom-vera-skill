@@ -68,35 +68,44 @@ exports.handler = (request, context, cb) => {
   const directive = request.directive.header.name || 'unknown';
   utils.log('DEBUG', `${namespace}::${directive} Request: ${JSON.stringify(request)}`);
 
+  let handler = null;
+
   if (namespace === 'Alexa.Discovery' && directive === 'Discover') {
-    discoveryHandler(vera, request, context, callback);
+    handler = discoveryHandler(vera, request, context, callback);
 
   } else if (namespace === 'Alexa' && directive === 'ReportState') {
-    reportStateHandler(vera, request, context, callback);
+    handler = reportStateHandler(vera, request, context, callback);
 
   } else if (namespace === 'Alexa.SceneController' && directive === 'Activate') {
-    sceneHandler(vera, request, context, callback);
+    handler = sceneHandler(vera, request, context, callback);
 
   } else if (namespace === 'Alexa.PowerController' &&
     ['TurnOn', 'TurnOff'].indexOf(directive) !== -1) {
-    powerHandler(vera, request, context, callback);
+    handler = powerHandler(vera, request, context, callback);
 
   } else if (namespace === 'Alexa.PowerLevelController' &&
     ['SetPowerLevel', 'AdjustPowerLevel'].indexOf(directive) !== -1) {
-    powerLevelHandler(vera, request, context, callback);
+    handler = powerLevelHandler(vera, request, context, callback);
 
   } else if (namespace === 'Alexa.LockController' &&
     ['Lock', 'Unlock'].indexOf(directive) !== -1) {
-    lockHandler(vera, request, context, callback);
+    handler = lockHandler(vera, request, context, callback);
 
   } else if (namespace === 'Alexa.ThermostatController' &&
     ['SetTargetTemperature', 'AdjustTargetTemperature', 'SetThermostatMode'].indexOf(directive) !== -1) {
-    thermostatHandler(vera, request, context, callback);
+    handler = thermostatHandler(vera, request, context, callback);
 
   } else {
-    const correlationToken = request.directive.header.correlationToken;
-    const endpointId = request.directive.endpoint && request.directive.endpoint.endpointId;
-    const err = utils.error('INVALID_DIRECTIVE', `Unsupported namespace/directive: ${namespace}/${directive}`);
-    return callback(null, responses.createErrorResponse(err, correlationToken, endpointId));
+    handler = Promise.reject(
+      utils.error('INVALID_DIRECTIVE', `Unsupported namespace/directive: ${namespace}/${directive}`)
+    );
   }
+
+  handler
+    .then((response) => callback(null, response))
+    .catch((err) => {
+      const correlationToken = request.directive.header.correlationToken;
+      const endpointId = request.directive.endpoint && request.directive.endpoint.endpointId;
+      callback(null, responses.createErrorResponse(err, correlationToken, endpointId));
+    });
 };

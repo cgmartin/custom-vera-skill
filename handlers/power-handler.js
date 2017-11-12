@@ -2,19 +2,18 @@
 const utils = require('../lib/utils');
 const res = require('../lib/responses');
 
-module.exports = function powerHandler(vera, request, context, callback) {
+module.exports = function powerHandler(vera, request) {
   const correlationToken = request.directive.header.correlationToken;
   const directive = request.directive.header.name || 'unknown';
   const endpointId = request.directive.endpoint.endpointId;
   const [ctrlId, endpointType, dId] = endpointId.split('-');
 
   // Retrieve the device info from vera
-  utils.isEndpointTypeValid(endpointId, endpointType, 'device')
+  return utils.isEndpointTypeValid(endpointId, endpointType, 'device')
     .then(() => vera.getSummaryDataById(ctrlId))
     .then(([sData, cInfo]) => Promise.all([utils.findDeviceInSummaryData(dId, sData), sData, cInfo]))
     .then(([d, sData, cInfo]) => changePower(d, sData, cInfo, directive, vera))
-    .then((props) => callback(null, res.createResponseObj(props, endpointId, correlationToken)))
-    .catch((err) => callback(null, res.createErrorResponse(err, correlationToken, endpointId)));
+    .then((props) => res.createResponseObj(props, endpointId, correlationToken));
 };
 
 function changePower(d, sData, cInfo, directive, vera) {

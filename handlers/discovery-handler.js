@@ -3,15 +3,12 @@ const utils = require('../lib/utils');
 const config = require('../lib/config');
 const res = require('../lib/responses');
 
-module.exports = function discoveryHandler(vera, request, context, callback) {
-  const correlationToken = request.directive.header.correlationToken;
-
+module.exports = function discoveryHandler(vera) {
   vera.cache.clear(); // start fresh for discovery
-  vera.getControllers()
+  return vera.getControllers()
     .then((ctrls) => getAllControllerInfo(ctrls, vera))
     .then((results) => collectEndpoints(results))
-    .then((endpoints) => callback(null, res.createDiscoveryResponseObj(endpoints)))
-    .catch((err) => callback(null, res.createErrorResponse(err, correlationToken)));
+    .then((endpoints) => res.createDiscoveryResponseObj(endpoints));
 };
 
 function getAllControllerInfo(ctrls, vera) {

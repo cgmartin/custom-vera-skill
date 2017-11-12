@@ -2,16 +2,15 @@
 const utils = require('../lib/utils');
 const res = require('../lib/responses');
 
-module.exports = function reportStateHandler(vera, request, context, callback) {
+module.exports = function reportStateHandler(vera, request) {
   const correlationToken = request.directive.header.correlationToken;
   const endpointId = request.directive.endpoint.endpointId;
   const [ctrlId, endpointType, dId] = endpointId.split('-');
 
   // Retrieve the device/scene info from vera
-  vera.getSummaryDataById(ctrlId)
+  return vera.getSummaryDataById(ctrlId)
     .then(([sData]) => reportState(dId, sData, endpointType))
-    .then((props) => callback(null, res.createResponseObj(props, endpointId, correlationToken, 'Alexa', 'StateReport')))
-    .catch((err) => callback(null, res.createErrorResponse(err, correlationToken, endpointId)));
+    .then((props) => res.createResponseObj(props, endpointId, correlationToken, 'Alexa', 'StateReport'));
 };
 
 function reportState(dId, sData, endpointType) {

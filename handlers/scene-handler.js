@@ -2,21 +2,20 @@
 const utils = require('../lib/utils');
 const res = require('../lib/responses');
 
-module.exports = function sceneHandler(vera, request, context, callback) {
+module.exports = function sceneHandler(vera, request) {
   const correlationToken = request.directive.header.correlationToken;
   const directive = request.directive.header.name || 'unknown';
   const endpointId = request.directive.endpoint.endpointId;
   const [ctrlId, endpointType, sId] = endpointId.split('-');
 
   // Retrieve the scene info from vera
-  utils.isEndpointTypeValid(endpointId, endpointType, 'scene')
+  return utils.isEndpointTypeValid(endpointId, endpointType, 'scene')
     .then(() => vera.getSummaryDataById(ctrlId))
     .then(([sData, cInfo]) => Promise.all([utils.findSceneInSummaryData(sId, sData), sData, cInfo]))
     .then(([s, sData, cInfo]) => controlScene(s, sData, cInfo, directive, vera))
-    .then(([props, eventName]) => callback(null, res.createResponseObj(
-      props, endpointId, correlationToken, 'Alexa.SceneController', eventName
-    )))
-    .catch((err) => callback(null, res.createErrorResponse(err, correlationToken, endpointId)));
+    .then(([props, eventName]) => res.createResponseObj(
+      props, endpointId, correlationToken, 'Alexa.SceneController', eventName)
+    );
 };
 
 function controlScene(s, sData, cInfo, directive, vera) {
