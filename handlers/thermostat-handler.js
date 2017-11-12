@@ -2,7 +2,7 @@
 const utils = require('../lib/utils');
 const res = require('../lib/responses');
 
-module.exports = function thermostatHandler(vera, request, context, callback) {
+module.exports = function thermostatHandler(vera, request) {
   const correlationToken = request.directive.header.correlationToken;
   const directive = request.directive.header.name || 'unknown';
   const payload = request.directive.payload;
@@ -10,12 +10,11 @@ module.exports = function thermostatHandler(vera, request, context, callback) {
   const [ctrlId, endpointType, dId] = endpointId.split('-');
 
   // Retrieve the device info from vera'
-  utils.isEndpointTypeValid(endpointId, endpointType, 'device')
+  return utils.isEndpointTypeValid(endpointId, endpointType, 'device')
     .then(() => vera.getSummaryDataById(ctrlId))
     .then(([sData, cInfo]) => Promise.all([utils.findDeviceInSummaryData(dId, sData), sData, cInfo]))
     .then(([d, sData, cInfo]) => changeThermostat(d, sData, cInfo, directive, payload, vera))
-    .then((props) => callback(null, res.createResponseObj(props, endpointId, correlationToken)))
-    .catch((err) => callback(null, res.createErrorResponse(err, correlationToken, endpointId)));
+    .then((props) => res.createResponseObj(props, endpointId, correlationToken));
 };
 
 function changeThermostat(d, sData, cInfo, directive, payload, vera) {
