@@ -254,6 +254,21 @@ The Amazon Alexa Developer docs have [step-by-step instructions](https://develop
 
 You can use the following URL for a privacy policy link in Step 1: <https://raw.githubusercontent.com/cgmartin/custom-vera-skill/master/lwa/privacy-policy.html>
 
+## Alexa-enabled groups
+
+> With Alexa-enabled Groups, customers no longer need to remember the specific name of a smart device or group of smart devices to control them. A customer can now include their Echo devices in specific smart home groups, enabling Alexa to act more intelligently on requests. For example, when a customer walks into the living room, they can say, “Alexa, turn on the lights” rather than “Alexa, turn on the living room lights.”
+
+~ from [Alexa Blogs](https://developer.amazon.com/blogs/alexa/post/0a55ae8a-1f39-411f-a3ca-6a19be80b2f3/now-available-routines-alexa-enabled-groups-and-smart-home-device-state-in-the-amazon-alexa-app) November 02, 2017
+
+For the Alexa-enabled group "turn on the lights" feature to work, devices must be discovered as a LIGHT [display category](https://developer.amazon.com/docs/device-apis/alexa-discovery.html#display-categories), as opposed to a SWITCH (or other types). Basing this off of the Vera `category_num` and `subcategory_num` can be problematic (is the internal switch a light or something else?). This project makes a best guess from the category/subcategory, but you can also explicitly set the Alexa display category by adding a new custom variable:
+
+```
+# Under Devices -> {Device} -> Advanced -> New Service (tab)
+New service: urn:cgmartin-com:serviceId:SmartHomeSkill1
+New variable: DisplayCategory
+New value: LIGHT
+```
+
 ## License
 
 [MIT License](./LICENSE.txt)
