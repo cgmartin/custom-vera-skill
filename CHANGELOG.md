@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### New features
-- Added ability to override the Alexa display category from a custom Vera device variable:
+- Added ability to override the Alexa display category from a custom Vera device variable [#2](https://github.com/cgmartin/custom-vera-skill/pull/2):
     ```
     # Under Devices -> {Device} -> Advanced -> New Service (tab)
     New service: urn:cgmartin-com:serviceId:SmartHomeSkill1
@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [v1.0.1] - 2017-11-12
 ### Internal refactor
-- Refactored handlers to use a promise API.
+- Refactored handlers to use a promise API [#1](https://github.com/cgmartin/custom-vera-skill/pull/1).
 - No new features or fixes.
 
 ## v1.0.0 - 2017-11-08
