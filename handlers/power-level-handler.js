@@ -51,7 +51,7 @@ function setPowerLevel(dId, cInfo, payload, vera) {
 function adjustPowerLevel(dId, cInfo, payload, vera) {
   return vera.getDimLevel(cInfo, dId)
     .then((level) => {
-      let powerLevel = Number(level) + payload.powerLevelDelta;
+      const powerLevel = utils.clamp(Number(level) + payload.powerLevelDelta, 0, 100);
       return vera.dimLight(cInfo, dId, powerLevel).then(() => powerLevel);
     });
 }
