@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## v1.1.0-beta - [Unreleased]
+### Bug fixes
+- Fixed: Alexa gives an error when adjusting a dimmer out of range [#3](https://github.com/cgmartin/custom-vera-skill/issues/3)
+
 ### New features
 - Added ability to override the Alexa display category from a custom Vera device variable [#2](https://github.com/cgmartin/custom-vera-skill/pull/2):
     ```
