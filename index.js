@@ -23,8 +23,11 @@ const reportStateHandler = require('./handlers/report-state-handler');
 const sceneHandler = require('./handlers/scene-handler');
 const powerHandler = require('./handlers/power-handler');
 const powerLevelHandler = require('./handlers/power-level-handler');
+const brightnessHandler = require('./handlers/brightness-handler');
 const lockHandler = require('./handlers/lock-handler');
 const thermostatHandler = require('./handlers/thermostat-handler');
+const colorHandler = require('./handlers/color-handler');
+const colorTemperatureHandler = require('./handlers/color-temperature-handler');
 
 /**
  * Main entry point.
@@ -87,6 +90,10 @@ exports.handler = (request, context, cb) => {
     ['SetPowerLevel', 'AdjustPowerLevel'].indexOf(directive) !== -1) {
     handler = powerLevelHandler(vera, request, context, callback);
 
+  } else if (namespace === 'Alexa.BrightnessController' &&
+    ['SetBrightness', 'AdjustBrightness'].indexOf(directive) !== -1) {
+    handler = brightnessHandler(vera, request, context, callback);
+
   } else if (namespace === 'Alexa.LockController' &&
     ['Lock', 'Unlock'].indexOf(directive) !== -1) {
     handler = lockHandler(vera, request, context, callback);
@@ -94,6 +101,14 @@ exports.handler = (request, context, cb) => {
   } else if (namespace === 'Alexa.ThermostatController' &&
     ['SetTargetTemperature', 'AdjustTargetTemperature', 'SetThermostatMode'].indexOf(directive) !== -1) {
     handler = thermostatHandler(vera, request, context, callback);
+
+  } else if (namespace === 'Alexa.ColorController' &&
+    ['SetColor'].indexOf(directive) !== -1) {
+    handler = colorHandler(vera, request, context, callback);
+
+  } else if (namespace === 'Alexa.ColorTemperatureController' &&
+    ['SetColorTemperature', 'DecreaseColorTemperature', 'IncreaseColorTemperature'].indexOf(directive) !== -1) {
+    handler = colorTemperatureHandler(vera, request, context, callback);
 
   } else {
     handler = Promise.reject(

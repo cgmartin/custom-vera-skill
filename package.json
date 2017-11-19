@@ -1,6 +1,6 @@
 {
   "name": "custom-vera-skill",
-  "version": "1.1.0-beta",
+  "version": "1.1.0",
   "description": "Unofficial custom Smart Home v3 skill for Vera controllers",
   "main": "index.js",
   "directories": {
@@ -13,13 +13,19 @@
     "test-activate-scene": "lambda-local -l index.js --envfile .env -t 10 -e examples/activate-scene-event.js",
     "test-adjust-power-level": "lambda-local -l index.js --envfile .env -t 10 -e examples/adjust-power-level-event.js",
     "test-set-power-level": "lambda-local -l index.js --envfile .env -t 10 -e examples/set-power-level-event.js",
+    "test-adjust-brightness": "lambda-local -l index.js --envfile .env -t 10 -e examples/adjust-brightness-event.js",
+    "test-set-brightness": "lambda-local -l index.js --envfile .env -t 10 -e examples/set-brightness-event.js",
     "test-turnon-power": "lambda-local -l index.js --envfile .env -t 10 -e examples/turnon-power-event.js",
     "test-turnoff-power": "lambda-local -l index.js --envfile .env -t 10 -e examples/turnoff-power-event.js",
     "test-adjust-temperature": "lambda-local -l index.js --envfile .env -t 10 -e examples/adjust-temperature-event.js",
     "test-set-temperature": "lambda-local -l index.js --envfile .env -t 10 -e examples/set-temperature-event.js",
     "test-thermostat-mode": "lambda-local -l index.js --envfile .env -t 10 -e examples/set-thermostat-mode-event.js",
     "test-lock": "lambda-local -l index.js --envfile .env -t 10 -e examples/lock-event.js",
-    "test-unlock": "lambda-local -l index.js --envfile .env -t 10 -e examples/unlock-event.js"
+    "test-unlock": "lambda-local -l index.js --envfile .env -t 10 -e examples/unlock-event.js",
+    "test-set-color": "lambda-local -l index.js --envfile .env -t 10 -e examples/set-color-event.js",
+    "test-set-color-temperature": "lambda-local -l index.js --envfile .env -t 10 -e examples/set-color-temperature-event.js",
+    "test-decrease-color-temperature": "lambda-local -l index.js --envfile .env -t 10 -e examples/decrease-color-temperature-event.js",
+    "test-increase-color-temperature": "lambda-local -l index.js --envfile .env -t 10 -e examples/increase-color-temperature-event.js"
   },
   "author": "Christopher Martin <cgmartin@gmail.com>",
   "license": "MIT",

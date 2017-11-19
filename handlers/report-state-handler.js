@@ -9,15 +9,16 @@ module.exports = function reportStateHandler(vera, request) {
 
   // Retrieve the device/scene info from vera
   return vera.getSummaryDataById(ctrlId)
-    .then(([sData]) => reportState(dId, sData, endpointType))
+    .then(([sData, cInfo]) => reportState(dId, sData, endpointType, cInfo, vera))
     .then((props) => res.createResponseObj(props, endpointId, correlationToken, 'Alexa', 'StateReport'));
 };
 
-function reportState(dId, sData, endpointType) {
+function reportState(dId, sData, endpointType, cInfo, vera) {
   // device or scene state?
   if (endpointType === 'device') {
     return utils.findDeviceInSummaryData(dId, sData)
-      .then((d) => createDeviceStateContextProps(d, sData));
+      .then((d) => Promise.all([d, vera.getDeviceStatus(cInfo, dId)]))
+      .then(([d, dStatus]) => createDeviceStateContextProps(d, sData, dStatus));
   } else if (endpointType === 'scene') {
     return utils.findSceneInSummaryData(dId, sData)
       .then((s) => createSceneStateContextProps(s, sData));
@@ -25,9 +26,9 @@ function reportState(dId, sData, endpointType) {
   return Promise.reject(utils.error('NO_SUCH_ENDPOINT', `Unknown endpoint type: ${endpointType}`));
 }
 
-function createDeviceStateContextProps(d, sData) {
+function createDeviceStateContextProps(d, sData, dStatus) {
   switch (d['category']) {
-    case 2: return createDimmerContextProps(d);
+    case 2: return createDimmerContextProps(d, dStatus);
     case 3: return createSwitchContextProps(d);
     case 5: return createThermostatContextProps(d, sData);
     case 6: return createCameraContextProps(d);
@@ -37,17 +38,37 @@ function createDeviceStateContextProps(d, sData) {
   }
 }
 
-function createDimmerContextProps(d) {
+function createDimmerContextProps(d, dStatus) {
+  const deviceStates = (dStatus[`Device_Num_${d.id}`]) ? dStatus[`Device_Num_${d.id}`].states : [];
+  const displayCategory = utils.getDimmerDisplayCategory(d, deviceStates);
+
   const properties = [
     res.createContextProperty('Alexa.EndpointHealth', 'connectivity', {value: 'OK'}),
-    res.createContextProperty('Alexa.PowerController', 'powerState', Number(d.status) === 1 ? 'ON' : 'OFF'),
-    res.createContextProperty('Alexa.PowerLevelController', 'powerLevel', Number(d.level)),
-    res.createContextProperty('Alexa.BrightnessController', 'brightness', Number(d.level))
+    res.createContextProperty('Alexa.PowerController', 'powerState', Number(d.status) === 1 ? 'ON' : 'OFF')
   ];
-  // TODO: light with color.
-  // if (Number(d.subcategory) === 4 && d.color) {
-  //   properties.push(res.createContextProperty('Alexa.ColorController', 'color', d.color));
-  // }
+
+  // Smart Home API recommends you should implement the most specific interface possible
+  if (displayCategory === 'LIGHT') {
+    properties.push(res.createContextProperty('Alexa.BrightnessController', 'brightness', Number(d.level)));
+  } else {
+    properties.push(res.createContextProperty('Alexa.PowerLevelController', 'powerLevel', Number(d.level)));
+  }
+
+  // Light with color
+  if (Number(d.subcategory) === 4) {
+    const sColors = utils.extractRGBColors(deviceStates);
+    if ('R' in sColors && 'G' in sColors && 'B' in sColors) {
+      const hsb = utils.convertRgbToHsv(sColors.R, sColors.G, sColors.B);
+      properties.push(res.createContextProperty('Alexa.ColorController', 'color', hsb));
+    }
+    if ('W' in sColors && 'D' in sColors) {
+      const kelvin = utils.convertWarmColdValuesToKelvin(sColors.W, sColors.D);
+      properties.push(
+        res.createContextProperty('Alexa.ColorTemperatureController', 'colorTemperatureInKelvin', kelvin)
+      );
+    }
+  }
+
   return properties;
 }
 
@@ -91,7 +112,7 @@ function createTemperatureSensorContextProps(d, sData) {
   ];
 }
 
-function createSceneStateContextProps(s, sData) {
+function createSceneStateContextProps(_s, _sData) {
   // TODO: Verify that the scene only contains allowed secure devices within it
   // https://developer.amazon.com/docs/smarthome/provide-scenes-in-a-smart-home-skill.html#allowed-devices
   return [
