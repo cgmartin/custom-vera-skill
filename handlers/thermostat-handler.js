@@ -9,7 +9,7 @@ module.exports = function thermostatHandler(vera, request) {
   const endpointId = request.directive.endpoint.endpointId;
   const [ctrlId, endpointType, dId] = endpointId.split('-');
 
-  // Retrieve the device info from vera'
+  // Retrieve the device info from vera
   return utils.isEndpointTypeValid(endpointId, endpointType, 'device')
     .then(() => vera.getSummaryDataById(ctrlId))
     .then(([sData, cInfo]) => Promise.all([utils.findDeviceInSummaryData(dId, sData), sData, cInfo]))

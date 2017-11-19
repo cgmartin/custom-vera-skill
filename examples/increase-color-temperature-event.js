@@ -4,19 +4,19 @@
 module.exports = {
   'directive': {
     'header': {
-      'namespace': 'Alexa',
-      'name': 'ReportState',
+      'namespace': 'Alexa.ColorTemperatureController',
+      'name': 'IncreaseColorTemperature',
       'payloadVersion': '3',
       'messageId': '1bd5d003-31b9-476f-ad03-71d471922820',
       'correlationToken': 'dFMb0z+PgpgdDmluhJ1LddFvSqZ/jCc8ptlAKulUj90jSqg=='
     },
     'endpoint': {
-      'endpointId': '00000000-device-143',
-      'cookie': {},
       'scope': {
         'type': 'BearerToken',
         'token': 'access-token-from-skill'
-      }
+      },
+      'endpointId': '00000000-device-143',
+      'cookie': {}
     },
     'payload': {}
   }

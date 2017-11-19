@@ -31,7 +31,7 @@ function collectEndpoints(results) {
     utils.log('DEBUG', `Vera UserData: ${cInfo.PK_Device}: # of devices = ${udata.devices.length}`);
     endpoints = endpoints.concat(processDevices(cInfo, udata), processScenes(cInfo, udata));
   });
-  return endpoints;
+  return endpoints.filter((e) => e); // filter nulls
 }
 
 function processScenes(cInfo, udata) {
@@ -93,46 +93,37 @@ function createEndpointFromDevice(d, cInfo, udata) {
 
 function createDimmerEndpoint(d, cInfo, udata) {
   const subcategory = Number(d.subcategory || d.subcategory_num);
-  let displayCategory = 'OTHER';
-  switch (subcategory) {
-    case 0: displayCategory = 'LIGHT'; break;
-    case 1: displayCategory = 'LIGHT'; break;
-    case 2: displayCategory = 'SMARTPLUG'; break;
-    case 3: displayCategory = 'SWITCH'; break;
-    case 4: displayCategory = 'LIGHT'; break;
-  }
-  displayCategory = getDisplayCategoryOverride(d, displayCategory);
+  const displayCategory = utils.getDimmerDisplayCategory(d, d.states);
 
   const endpoint = createStandardDeviceEndpointProps('Dimmable Light', displayCategory, d, cInfo, udata);
   endpoint.capabilities = [
     createDiscoveryCapability('Alexa'),
     createDiscoveryCapability('Alexa.EndpointHealth', ['connectivity']),
-    createDiscoveryCapability('Alexa.PowerController', ['powerState']),
-    createDiscoveryCapability('Alexa.PowerLevelController', ['powerLevel'])
-    // createDiscoveryCapability('Alexa.BrightnessController', ['brightness'])
+    createDiscoveryCapability('Alexa.PowerController', ['powerState'])
   ];
 
-  // TODO: light with color
-  // if (subcategory === 4) {
-  //   endpoint.capabilities.push(createDiscoveryCapability('Alexa.ColorController', ['color']));
-  // }
+  if (displayCategory === 'LIGHT') {
+    endpoint.capabilities.push(createDiscoveryCapability('Alexa.BrightnessController', ['brightness']));
+  } else {
+    endpoint.capabilities.push(createDiscoveryCapability('Alexa.PowerLevelController', ['powerLevel']));
+  }
+
+  // Light with color
+  if (subcategory === 4) {
+    const sColors = utils.extractRGBColors(d.states);
+    if ('R' in sColors && 'G' in sColors && 'B' in sColors) {
+      endpoint.capabilities.push(createDiscoveryCapability('Alexa.ColorController', ['color']));
+    }
+    if ('W' in sColors && 'D' in sColors) {
+      endpoint.capabilities.push(createDiscoveryCapability('Alexa.ColorTemperatureController', ['colorTemperatureInKelvin']));
+    }
+  }
 
   return endpoint;
 }
 
 function createSwitchEndpoint(d, cInfo, udata) {
-  const subcategory = Number(d.subcategory || d.subcategory_num);
-  let displayCategory = 'OTHER';
-  switch (subcategory) {
-    case 0: displayCategory = 'LIGHT'; break;
-    case 1: displayCategory = 'SWITCH'; break;
-    case 2: displayCategory = 'SWITCH'; break;
-    case 3: displayCategory = 'SMARTPLUG'; break;
-    case 5: displayCategory = 'SWITCH'; break;
-    case 6: displayCategory = 'SWITCH'; break;
-  }
-  displayCategory = getDisplayCategoryOverride(d, displayCategory);
-
+  const displayCategory = utils.getSwitchDisplayCategory(d, d.states);
   const endpoint = createStandardDeviceEndpointProps('Switch', displayCategory, d, cInfo, udata);
   endpoint.capabilities = [
     createDiscoveryCapability('Alexa'),
@@ -184,7 +175,7 @@ function createTemperatureSensorEndpoint(d, cInfo, udata) {
 }
 
 function createStandardDeviceEndpointProps(categoryName, displayCategory, d, cInfo, udata) {
-  const roomName = getRoomNameFromId(d.room, udata.rooms);
+  const roomName = utils.getRoomNameFromId(d.room, udata.rooms);
   const inRoom = (roomName) ? ` in ${roomName}` : '';
   return {
     endpointId: `${cInfo.PK_Device}-device-${d.id}`,
@@ -201,7 +192,7 @@ function createStandardDeviceEndpointProps(categoryName, displayCategory, d, cIn
 function createSceneEndpoint(s, cInfo, udata) {
   // TODO: Verify that the scene only contains allowed secure devices within it
   // https://developer.amazon.com/docs/smarthome/provide-scenes-in-a-smart-home-skill.html#allowed-devices
-  const roomName = getRoomNameFromId(s.room, udata.rooms);
+  const roomName = utils.getRoomNameFromId(s.room, udata.rooms);
   const inRoom = (roomName) ? ` in ${roomName}` : '';
   const controllerCapability = createDiscoveryCapability('Alexa.SceneController');
   controllerCapability.supportsDeactivation = false;
@@ -251,19 +242,21 @@ function createCameraStreamDiscoveryCapability(d) {
     version: '3',
     cameraStreamConfigurations: []
   };
-  // TODO: add configurations based on camera device.
-  return capability;
-}
-
-function getRoomNameFromId(rId, rooms) {
-  const room = rooms.find((r) => Number(r.id) === Number(rId));
-  return (room) ? room['name'] : null;
-}
-
-function getDisplayCategoryOverride(d, defaultCategory) {
-  if (!d.states) return defaultCategory;
-  const override = d.states.find((s) =>
-    (s.service === 'urn:cgmartin-com:serviceId:SmartHomeSkill1' && s.variable === 'DisplayCategory')
+  const videoUrlsState = d.states.find(
+    (s) => s.service === 'urn:micasaverde-com:serviceId:Camera1' && s.variable === 'VideoURLs'
   );
-  return (override) ? override.value : defaultCategory;
+  const videoUrlPairs = videoUrlsState.value.split(/:/);
+  utils.log('DEBUG', `videoUrlPairs: ${JSON.stringify(videoUrlPairs)}`);
+  for (let i = 0; i < videoUrlPairs.length; i += 2) {
+    let videoInfo = videoUrlPairs[i];
+    let videoPath = videoUrlPairs[i + 1];
+    if (!videoInfo || !videoPath) continue;
+    let [protocol, isAuth, videoCodec, audioCodec, resolution, width, height, players] = videoInfo.split(/,/);
+    utils.log('DEBUG', `videoUrl[${i}] ${JSON.stringify({protocol, isAuth, videoCodec, audioCodec, resolution, width, height, players, videoPath})}`);
+
+    // TODO
+    // Alexa camera requirements are not currently supported by Vera [2017-11-17]
+    // https://developer.amazon.com/docs/smarthome/build-smart-home-camera-skills.html#camera-requirements
+  }
+  return capability;
 }

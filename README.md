@@ -11,13 +11,30 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 - Only a single Vera user is supported. Unless you want the world controlling your home devices, multi-user authentication and other implementation changes would be required for a public skill.
 - Vera Scenes are not currently being checked for [secure devices](https://developer.amazon.com/docs/smarthome/provide-scenes-in-a-smart-home-skill.html#allowed-devices) and would not pass the Skill approval process. Do not put Door Locks or other sensitive devices that could be misued from Alexa within your Vera Scenes. Again, use at your own risk.
 
-## What is Included
+## What is Supported
 
-Most Smart Home v3 features have been implemented (dimmers, switches, locks, thermostats, scenes), but there are few items missing support:
+The following Smart Home v3 features have been implemented for Vera-controlled devices:
 
-- [Cameras](https://developer.amazon.com/docs/smarthome/build-smart-home-camera-skills.html): If you have a camera integrated with Vera and wouldn't mind sharing your user_data and sdata information for the device, I'd be happy to look into adding support. I do not currently have any cameras to test with.
-- [Colored Lights](https://developer.amazon.com/docs/smarthome/build-smart-home-skills-for-lights.html): Same deal... I do not have any colored lights to test with - please share your user_data and sdata device info.
-- [Entertainment Devices](https://developer.amazon.com/docs/smarthome/build-smart-home-skills-for-entertainment-devices.html): I'm not sure how possible or interested I'd be adding support for this. I know there is a Harmony Hub Vera plugin that might be able to be integrated, but it wasn't stable for me. Regarding speakers, I don't know offhand if that works through Vera.
+- **Dimmable Lights**
+  - On / Off capability with [Alexa.PowerController](https://developer.amazon.com/docs/device-apis/alexa-powercontroller.html).
+  - Dimmable level with [Alexa.BrightnessController](https://developer.amazon.com/docs/device-apis/alexa-brightnesscontroller.html) or [Alexa.PowerLevelController](https://developer.amazon.com/docs/device-apis/alexa-powerlevelcontroller.html) depending if it is used as a `LIGHT` or `SWITCH`, respectively.
+  - RGB color with [Alexa.ColorController](https://developer.amazon.com/docs/device-apis/alexa-colorcontroller.html) for RGB LED bulbs.
+  - Color temperature with [Alexa.ColorTemperatureController](https://developer.amazon.com/docs/device-apis/alexa-colortemperaturecontroller.html) for RGBW bulbs.
+- **Switches**
+  - On / Off capability with [Alexa.PowerController](https://developer.amazon.com/docs/device-apis/alexa-powercontroller.html).
+- **Door Locks**
+  - Lock / Unlock capability with [Alexa.LockController](https://developer.amazon.com/docs/device-apis/alexa-lockcontroller.html).
+- **Temperature Sensors**
+  - Report current temperature with [Alexa.TemperatureSensor](https://developer.amazon.com/docs/device-apis/alexa-temperaturesensor.html).
+- **Thermostats**
+  - Control thermostat temperature and mode with [Alexa.ThermostatController](https://developer.amazon.com/docs/device-apis/alexa-thermostatcontroller.html).
+- **Scenes**
+  - Activate scenes with [Alexa.SceneController](https://developer.amazon.com/docs/device-apis/alexa-scenecontroller.html).
+
+Not supported
+
+- [Cameras](https://developer.amazon.com/docs/smarthome/build-smart-home-camera-skills.html): Smart Home skill camera video requires RSTP + RTP streaming protocols over port 443. Vera does not support this from their public relay servers, AFAIK.
+- [Entertainment Devices](https://developer.amazon.com/docs/smarthome/build-smart-home-skills-for-entertainment-devices.html)
 
 
 ## Getting Started
