@@ -4,7 +4,7 @@ const config = require('../lib/config');
 const res = require('../lib/responses');
 
 module.exports = function discoveryHandler(vera) {
-  vera.cache.clear(); // start fresh for discovery
+  //vera.cache.clear(); // start fresh for discovery
   return vera.getControllers()
     .then((ctrls) => getAllControllerInfo(ctrls, vera))
     .then((results) => collectEndpoints(results))
@@ -144,16 +144,6 @@ function createThermostatEndpoint(d, cInfo, udata) {
   return endpoint;
 }
 
-function createCameraEndpoint(d, cInfo, udata) {
-  const endpoint = createStandardDeviceEndpointProps('Camera', 'CAMERA', d, cInfo, udata);
-  endpoint.capabilities = [
-    createDiscoveryCapability('Alexa'),
-    createDiscoveryCapability('Alexa.EndpointHealth', ['connectivity']),
-    createCameraStreamDiscoveryCapability(d)
-  ];
-  return endpoint;
-}
-
 function createLockEndpoint(d, cInfo, udata) {
   const endpoint = createStandardDeviceEndpointProps('Lock', 'SMARTLOCK', d, cInfo, udata);
   endpoint.capabilities = [
@@ -190,8 +180,10 @@ function createStandardDeviceEndpointProps(categoryName, displayCategory, d, cIn
 }
 
 function createSceneEndpoint(s, cInfo, udata) {
-  // TODO: Verify that the scene only contains allowed secure devices within it
+  // Verify that the scene only contains allowed secure devices within it
   // https://developer.amazon.com/docs/smarthome/provide-scenes-in-a-smart-home-skill.html#allowed-devices
+  if (utils.sceneHasForbiddenDevices(s.groups)) return null;
+
   const roomName = utils.getRoomNameFromId(s.room, udata.rooms);
   const inRoom = (roomName) ? ` in ${roomName}` : '';
   const controllerCapability = createDiscoveryCapability('Alexa.SceneController');
@@ -231,32 +223,6 @@ function createDiscoveryCapability(iface, supported) {
       retrievable: true,
       proactivelyReported: false
     };
-  }
-  return capability;
-}
-
-function createCameraStreamDiscoveryCapability(d) {
-  const capability = {
-    type: 'AlexaInterface',
-    interface: 'Alexa.CameraStreamController',
-    version: '3',
-    cameraStreamConfigurations: []
-  };
-  const videoUrlsState = d.states.find(
-    (s) => s.service === 'urn:micasaverde-com:serviceId:Camera1' && s.variable === 'VideoURLs'
-  );
-  const videoUrlPairs = videoUrlsState.value.split(/:/);
-  utils.log('DEBUG', `videoUrlPairs: ${JSON.stringify(videoUrlPairs)}`);
-  for (let i = 0; i < videoUrlPairs.length; i += 2) {
-    let videoInfo = videoUrlPairs[i];
-    let videoPath = videoUrlPairs[i + 1];
-    if (!videoInfo || !videoPath) continue;
-    let [protocol, isAuth, videoCodec, audioCodec, resolution, width, height, players] = videoInfo.split(/,/);
-    utils.log('DEBUG', `videoUrl[${i}] ${JSON.stringify({protocol, isAuth, videoCodec, audioCodec, resolution, width, height, players, videoPath})}`);
-
-    // TODO
-    // Alexa camera requirements are not currently supported by Vera [2017-11-17]
-    // https://developer.amazon.com/docs/smarthome/build-smart-home-camera-skills.html#camera-requirements
   }
   return capability;
 }

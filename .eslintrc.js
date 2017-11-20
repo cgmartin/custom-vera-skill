@@ -240,7 +240,7 @@ module.exports = {
         ],
         "valid-jsdoc": "off",
         "vars-on-top": "error",
-        "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+        "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
         "wrap-iife": "error",
         "wrap-regex": "error",
         "yield-star-spacing": "error",

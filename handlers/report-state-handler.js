@@ -18,20 +18,25 @@ function reportState(dId, sData, endpointType, cInfo, vera) {
   if (endpointType === 'device') {
     return utils.findDeviceInSummaryData(dId, sData)
       .then((d) => Promise.all([d, vera.getDeviceStatus(cInfo, dId)]))
-      .then(([d, dStatus]) => createDeviceStateContextProps(d, sData, dStatus));
-  } else if (endpointType === 'scene') {
-    return utils.findSceneInSummaryData(dId, sData)
-      .then((s) => createSceneStateContextProps(s, sData));
+      .then(([d, dStatus]) => createDeviceStateContextProps(d, dStatus, sData));
   }
+
+  if (endpointType === 'scene') {
+    return utils.findSceneInSummaryData(dId, sData)
+      .then((s) => Promise.all([s, vera.listScene(cInfo, dId)]))
+      .then(([s, sList]) => Promise.all([s, sList, checkSceneSecureDevices(sList)]))
+      .then(() => createSceneStateContextProps());
+  }
+
   return Promise.reject(utils.error('NO_SUCH_ENDPOINT', `Unknown endpoint type: ${endpointType}`));
 }
 
-function createDeviceStateContextProps(d, sData, dStatus) {
+function createDeviceStateContextProps(d, dStatus, sData) {
   switch (d['category']) {
     case 2: return createDimmerContextProps(d, dStatus);
     case 3: return createSwitchContextProps(d);
     case 5: return createThermostatContextProps(d, sData);
-    case 6: return createCameraContextProps(d);
+    //case 6: return createCameraContextProps(d);
     case 7: return createLockContextProps(d);
     case 17: return createTemperatureSensorContextProps(d, sData);
     default: return [];
@@ -91,12 +96,6 @@ function createThermostatContextProps(d, sData) {
   ];
 }
 
-function createCameraContextProps(_d) {
-  return [
-    res.createContextProperty('Alexa.EndpointHealth', 'connectivity', {value: 'OK'})
-  ];
-}
-
 function createLockContextProps(d) {
   return [
     res.createContextProperty('Alexa.EndpointHealth', 'connectivity', {value: 'OK'}),
@@ -112,9 +111,14 @@ function createTemperatureSensorContextProps(d, sData) {
   ];
 }
 
-function createSceneStateContextProps(_s, _sData) {
-  // TODO: Verify that the scene only contains allowed secure devices within it
-  // https://developer.amazon.com/docs/smarthome/provide-scenes-in-a-smart-home-skill.html#allowed-devices
+function checkSceneSecureDevices(sList) {
+  if (utils.sceneHasForbiddenDevices(sList.groups)) {
+    return Promise.reject(utils.error('NO_SUCH_ENDPOINT', 'Scene contains insecure devices'));
+  }
+  return true;
+}
+
+function createSceneStateContextProps() {
   return [
     res.createContextProperty('Alexa.EndpointHealth', 'connectivity', {value: 'OK'})
   ];

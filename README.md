@@ -6,10 +6,8 @@ This Open Source Software (OSS) project is not affiliated with, endorsed, or spo
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-**NOTE**: Do not submit this Smart Home skill for certification. This skill is intended for personal use only and should not be released on the Alexa Skills Marketplace:
+**NOTE**: Do not submit this Smart Home skill for certification. This skill is intended for personal use only and should not be released on the Alexa Skills Marketplace.
 
-- Only a single Vera user is supported. Unless you want the world controlling your home devices, multi-user authentication and other implementation changes would be required for a public skill.
-- Vera Scenes are not currently being checked for [secure devices](https://developer.amazon.com/docs/smarthome/provide-scenes-in-a-smart-home-skill.html#allowed-devices) and would not pass the Skill approval process. Do not put Door Locks or other sensitive devices that could be misued from Alexa within your Vera Scenes. Again, use at your own risk.
 
 ## What is Supported
 
@@ -121,8 +119,6 @@ These instructions will get a copy of the project up and running on your local m
 Setting up a S3 bucket to cache Vera auth sessions and device information will help speed up typical requests from ~3 seconds to ~1 second (based on my personal tests). If interested in using a different storage system, look at  `./lib/s3-vera-cache.js` for an example to base your implementation on.
 
 Without a cache, the Lambda function will need to authenticate, retrieve controller information, and create new sessions with the Vera servers for every request. This requires 6 HTTP requests at a minimum to be sent to the Vera Servers before sending other actions to your Controller. The Alexa application UI prefers quick responses and may display a temporary "This device is unresponsive" message when things aren't returned within ~2 seconds.
-
-**NOTE:** The cache will be cleared upon any Discovery events. If you experience any issues with normal usage, you can try rediscovering your devices from the Alexa app to clear the cache.
 
 The next sections assume you have the AWS CLI installed and [configured with your AWS credentials](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html).
 
