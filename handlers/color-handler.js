@@ -19,7 +19,7 @@ module.exports = function colorHandler(vera, request) {
 
 function changeColor(d, sData, cInfo, directive, payload, vera) {
   // Verify that the device is capable of power on/off actions
-  if ([2].indexOf(Number(d.category)) === -1) {
+  if (Number(d.category) !== 2 || Number(d.subcategory) !== 4) {
     return Promise.reject(utils.error('INVALID_VALUE', `Directive is not supported for this device: ${d.id}`));
   }
 

@@ -19,7 +19,7 @@ module.exports = function colorTemperatureHandler(vera, request) {
 
 function changeColorTemperature(d, sData, cInfo, directive, payload, vera) {
   // Verify that the device is capable of power on/off actions
-  if ([2].indexOf(Number(d.category)) === -1) {
+  if (Number(d.category) !== 2 || Number(d.subcategory) !== 4) {
     return Promise.reject(utils.error('INVALID_VALUE', `Directive is not supported for this device: ${d.id}`));
   }
 
@@ -53,16 +53,19 @@ function setColorTemperature(dId, cInfo, colorTemperatureInKelvin, vera) {
 function adjustColorTemperature(dId, cInfo, direction, vera) {
   // https://developer.amazon.com/docs/device-apis/alexa-colortemperaturecontroller.html#setcolortemperature
   const kelvinLevels = [2000, 3000, 4000, 5000, 5500, 6000, 7000, 8000, 9000];
-  return vera.getDeviceStatus(cInfo, dId)
-    .then((dStatus) => {
-      if (!dStatus[`Device_Num_${dId}`]) return utils.error('INTERNAL_ERROR', 'Missing device status');
-      return utils.extractRGBColors(dStatus[`Device_Num_${dId}`].states);
-    })
+  return getRGBColors(dId, cInfo, vera)
     .then((colors) => {
       const currentKelvin = utils.convertWarmColdValuesToKelvin(colors.W, colors.D);
       const closest = utils.closestNumber(currentKelvin, kelvinLevels);
       const nextStep = utils.clamp(kelvinLevels.indexOf(closest) + direction, 0, kelvinLevels.length - 1);
-      utils.log('DEBUG', `w/d: ${colors.W}/${colors.D} currentKelvin: ${currentKelvin} closest: ${closest} nextIndex: ${nextStep}`);
       return setColorTemperature(dId, cInfo, kelvinLevels[nextStep], vera);
+    });
+}
+
+function getRGBColors(dId, cInfo, vera) {
+  return vera.getDeviceStatus(cInfo, dId)
+    .then((dStatus) => {
+      if (!dStatus[`Device_Num_${dId}`]) return Promise.reject(utils.error('INTERNAL_ERROR', 'Missing device status'));
+      return utils.extractRGBColors(dStatus[`Device_Num_${dId}`].states);
     });
 }

@@ -18,7 +18,7 @@ module.exports = function lockHandler(vera, request) {
 
 function changeLock(d, sData, cInfo, directive, vera) {
   // Verify that the device is capable of power on/off actions
-  if ([7].indexOf(Number(d.category)) === -1) {
+  if (Number(d.category) !== 7) {
     return Promise.reject(utils.error('INVALID_VALUE', `Directive is not supported for this device: ${d.id}`));
   }
 

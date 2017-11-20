@@ -25,11 +25,19 @@ function controlScene(s, sData, cInfo, directive, vera) {
     return Promise.reject(utils.error('ENDPOINT_UNREACHABLE', `Endpoint scene is paused: ${s.id}`));
   }
 
-  // TODO: Include support for deactivate scene?
-  return activateScene(s, cInfo, sData, vera);
+  return vera.listScene(cInfo, s.id)
+    .then((sList) => checkSceneSecureDevices(sList))
+    .then(() => activateScene(s, cInfo, vera));
 }
 
-function activateScene(s, cInfo, sData, vera) {
+function checkSceneSecureDevices(sList) {
+  if (utils.sceneHasForbiddenDevices(sList.groups)) {
+    return Promise.reject(utils.error('NO_SUCH_ENDPOINT', 'Scene contains insecure devices'));
+  }
+  return true;
+}
+
+function activateScene(s, cInfo, vera) {
   // Send the scene activation request
   return vera.runScene(cInfo, s.id)
     .then(() => [
