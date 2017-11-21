@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Bug fixes
-- Fixed: Colored Bulb Device adjust temperature - incorrect error handling when device status is missing
+- Fixed: Colored Bulb Device adjust temperature - incorrect error handling when device status is missing.
+- Fixed: Lock handler returning incorrect response [#6](https://github.com/cgmartin/custom-vera-skill/pull/6).
 
 ### New features
 - Forbids discovery and usage of Scenes that include [insecure devices](https://developer.amazon.com/docs/smarthome/provide-scenes-in-a-smart-home-skill.html#scene-discovery-and-allowed-devices) [#5](https://github.com/cgmartin/custom-vera-skill/pull/5).

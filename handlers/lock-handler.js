@@ -37,7 +37,7 @@ function changeLock(d, sData, cInfo, directive, vera) {
     .then((state) => {
       return [
         res.createContextProperty('Alexa.EndpointHealth', 'connectivity', {value: 'OK'}),
-        res.createContextProperty('Alexa.PowerController', 'powerState', state, 3000)
+        res.createContextProperty('Alexa.LockController', 'lockState', state, 3000)
       ];
     });
 }
