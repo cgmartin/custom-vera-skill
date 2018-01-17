@@ -273,7 +273,7 @@ You can use the following URL for a privacy policy link in Step 1: <https://raw.
 
 ~ from [Alexa Blogs](https://developer.amazon.com/blogs/alexa/post/0a55ae8a-1f39-411f-a3ca-6a19be80b2f3/now-available-routines-alexa-enabled-groups-and-smart-home-device-state-in-the-amazon-alexa-app) November 02, 2017
 
-For the Alexa-enabled group "turn on the lights" feature to work, devices must be discovered as a LIGHT [display category](https://developer.amazon.com/docs/device-apis/alexa-discovery.html#display-categories), as opposed to a SWITCH (or other types). Basing this off of the Vera `category_num` and `subcategory_num` can be problematic (is the internal switch a light or something else?). This project makes a best guess from the category/subcategory, but you can also explicitly set the Alexa display category by adding a new custom variable:
+For the Alexa-enabled group "turn on the lights" feature to work, devices must be discovered as a LIGHT [display category](https://developer.amazon.com/docs/device-apis/alexa-discovery.html#display-categories), as opposed to a SWITCH (or other types). Basing this off of the Vera `category_num` and `subcategory_num` can be problematic (is the internal switch a light or something else?). This project makes a best guess from the category/subcategory, but you can also explicitly set the Alexa display category by adding a new custom variable within the Vera UI:
 
 ```
 # Under Devices -> {Device} -> Advanced -> New Service (tab)
